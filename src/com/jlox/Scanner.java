@@ -11,6 +11,8 @@ class Scanner {
     private final String source;
     private final List<Token> tokens = new ArrayList<>();
     private static final Map<String, TokenType> keywords;
+
+    private boolean inBlockComment = false;
     private int start = 0;
     private int current = 0;
     private int line = 1;
@@ -98,7 +100,14 @@ class Scanner {
                 addToken(SEMICOLON);
                 break;
             case '*':
-                addToken(STAR);
+                if (!inBlockComment && match('/')) {
+                    Lox.error(line, "malformed block comment.");
+                } else if (inBlockComment && match('/')) {
+                    inBlockComment = false;
+                } else if (!match('/')) {
+                    addToken(STAR);
+                }
+
                 break;
             case '!':
                 addToken(match('=') ? BANG_EQUAL : BANG);
@@ -116,6 +125,16 @@ class Scanner {
                 if (match('/')) {
                     while (peek() != '\n' && !isAtEnd())
                         advance();
+                } else if (match('*')) {
+                    inBlockComment = true;
+                    while (peek() != '*' && peekNext() != '/' && !isAtEnd()) {
+                        if (peek() == '\n')
+                            line++;
+
+                        advance();
+                    }
+
+                    System.out.println("done.");
                 } else {
                     addToken(SLASH);
                 }
@@ -146,7 +165,13 @@ class Scanner {
         while (isAlphaNumeric(peek()))
             advance();
 
-        addToken(IDENTIFIER);
+        String text = source.substring(start, current);
+
+        TokenType type = keywords.get(text);
+        if (type == null)
+            type = IDENTIFIER;
+
+        addToken(type);
     }
 
     private void number() {
