@@ -133,8 +133,6 @@ class Scanner {
 
                         advance();
                     }
-
-                    System.out.println("done.");
                 } else {
                     addToken(SLASH);
                 }
