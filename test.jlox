@@ -1,0 +1,9 @@
+// this is a comment
+(( )){} // grouping stuff
+!*+-/=<> <= == // operators
+"this is a string"
+" multi
+  line
+  string "
+@ // this is an error
+and class else for fun if nil or print return super this true var while // these are reserve words
