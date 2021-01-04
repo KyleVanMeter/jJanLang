@@ -137,10 +137,10 @@ class Scanner {
                     addToken(SLASH);
                 }
                 break;
-            case ':':
-                addToken(COLON);
             case '?':
                 addToken(QUESTION);
+            case ':':
+                addToken(COLON);
             case ' ':
             case '\t':
             case '\r':

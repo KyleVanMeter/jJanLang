@@ -32,13 +32,13 @@ class Parser {
         Expr mid = null;
         Expr right = null;
 
-        while (match(COLON)) {
-            consume(QUESTION, "Expected '?' after ':' in ternary expression.");
+        while (match(QUESTION)) {
+            consume(COLON, "Expected '?' after ':' in ternary expression.");
             mid = expression();
-            if (!check(QUESTION)) {
+            if (!check(COLON)) {
                 throw error(peek(), "Expected '?' after ':' in ternary expression.");
             }
-            if (match(QUESTION)) {
+            if (match(COLON)) {
                 right = expression();
                 expr = new Expr.Ternary(expr, mid, right);
             }
@@ -168,5 +168,28 @@ class Parser {
     private ParseError error(Token token, String message) {
         Lox.error(current, message);
         return new ParseError();
+    }
+
+    private void synchronize() {
+        advance();
+
+        while (!isAtEnd()) {
+            if (previous().type == SEMICOLON)
+                return;
+
+            switch (peek().type) {
+            case CLASS:
+            case FUN:
+            case VAR:
+            case FOR:
+            case IF:
+            case WHILE:
+            case PRINT:
+            case RETURN:
+                return;
+            }
+
+            advance();
+        }
     }
 }
