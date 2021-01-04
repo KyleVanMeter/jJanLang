@@ -5,6 +5,8 @@ abstract class Expr {
     interface Visitor<R> {
         R visitBinaryExpr(Binary expr);
 
+        R visitTernaryExpr(Ternary expr);
+
         R visitGroupingExpr(Grouping expr);
 
         R visitLiteralExpr(Literal expr);
@@ -26,6 +28,23 @@ abstract class Expr {
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitBinaryExpr(this);
+        }
+    }
+
+    static class Ternary extends Expr {
+        Ternary(Expr left, Expr mid, Expr right) {
+            this.left = left;
+            this.mid = mid;
+            this.right = right;
+        }
+
+        final Expr left;
+        final Expr mid;
+        final Expr right;
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitTernaryExpr(this);
         }
     }
 

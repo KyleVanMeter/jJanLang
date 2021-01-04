@@ -6,6 +6,11 @@ class AstPrinter implements Expr.Visitor<String> {
     }
 
     @Override
+    public String visitTernaryExpr(Expr.Ternary ternary) {
+        return parenthesize("ITE", ternary.left, ternary.mid, ternary.right);
+    }
+
+    @Override
     public String visitBinaryExpr(Expr.Binary expr) {
         return parenthesize(expr.operator.lexeme, expr.left, expr.right);
     }

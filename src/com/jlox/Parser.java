@@ -5,7 +5,9 @@ import java.util.List;
 import static com.jlox.TokenType.*;
 
 class Parser {
-    private static class ParseError extends RuntimeException {}
+    private static class ParseError extends RuntimeException {
+    }
+
     private final List<Token> tokens;
     private int current = 0;
 
@@ -22,7 +24,27 @@ class Parser {
     }
 
     private Expr expression() {
-        return equality();
+        return ternary();
+    }
+
+    private Expr ternary() {
+        Expr expr = equality();
+        Expr mid = null;
+        Expr right = null;
+
+        while (match(COLON)) {
+            consume(QUESTION, "Expected '?' after ':' in ternary expression.");
+            mid = expression();
+            if (!check(QUESTION)) {
+                throw error(peek(), "Expected '?' after ':' in ternary expression.");
+            }
+            if (match(QUESTION)) {
+                right = expression();
+                expr = new Expr.Ternary(expr, mid, right);
+            }
+        }
+
+        return expr;
     }
 
     private Expr equality() {

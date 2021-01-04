@@ -101,7 +101,7 @@ class Scanner {
                 break;
             case '*':
                 if (!inBlockComment && match('/')) {
-                    Lox.error(line, "malformed block comment.");
+                    Lox.error(line, "Malformed block comment.");
                 } else if (inBlockComment && match('/')) {
                     inBlockComment = false;
                 } else if (!match('/')) {
@@ -137,6 +137,10 @@ class Scanner {
                     addToken(SLASH);
                 }
                 break;
+            case ':':
+                addToken(COLON);
+            case '?':
+                addToken(QUESTION);
             case ' ':
             case '\t':
             case '\r':
@@ -228,9 +232,7 @@ class Scanner {
     }
 
     private boolean isAlpha(char c) {
-        return (c >= 'a' && c <= 'z') ||
-            (c >= 'A' && c <= 'Z') ||
-            c == '_';
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
     }
 
     private boolean isAlphaNumeric(char c) {
