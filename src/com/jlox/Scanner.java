@@ -22,6 +22,7 @@ class Scanner {
         keywords.put("and", AND);
         keywords.put("class", CLASS);
         keywords.put("else", ELSE);
+        keywords.put("false", FALSE);
         keywords.put("for", FOR);
         keywords.put("fun", FUN);
         keywords.put("if", IF);

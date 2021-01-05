@@ -34,10 +34,10 @@ class Parser {
 
         while (match(QUESTION)) {
             Token token = previous();
-            consume(COLON, "Expected '?' after ':' in ternary expression.");
+            consume(COLON, "Expected ':' after '?' in ternary expression.");
             mid = expression();
             if (!check(COLON)) {
-                throw error(peek(), "Expected '?' after ':' in ternary expression.");
+                throw error(peek(), "Expected ':' after '?' in ternary expression.");
             }
             if (match(COLON)) {
                 right = expression();

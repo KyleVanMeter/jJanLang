@@ -59,7 +59,7 @@ public class Lox {
             return;
 
         interpreter.interperet(expression);
-        // System.out.println(new AstPrinter().print(expression));
+        System.out.println(new AstPrinter().print(expression));
         /*
         for (Token token : tokens) {
             System.out.println(token);
