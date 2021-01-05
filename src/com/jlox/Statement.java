@@ -1,6 +1,5 @@
 package com.jlox;
 
-
 abstract class Statement {
     interface Visitor<R> {
         R visitExpressionStmt(Expression stmt);

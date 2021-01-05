@@ -1,7 +1,25 @@
 package com.jlox;
 
-class Interpreter implements Expr.Visitor<Object> {
+import com.jlox.Statement.Visitor;
+import java.util.List;
 
+class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
+
+    void interperet(List<Statement> stmts) {
+        try {
+            for (Statement stmt : stmts) {
+                execute(stmt);
+            }
+        } catch (RunTimeError error) {
+            Lox.RunTimeError(error);
+        }
+    }
+
+    private void execute(Statement stmt) {
+        stmt.accept(this);
+    }
+
+    /*
     void interperet(Expr expr) {
         try {
             Object value = evaluate(expr);
@@ -10,6 +28,7 @@ class Interpreter implements Expr.Visitor<Object> {
             Lox.RunTimeError(error);
         }
     }
+    */
 
     @Override
     public Object visitLiteralExpr(Expr.Literal expr) {
@@ -23,6 +42,21 @@ class Interpreter implements Expr.Visitor<Object> {
 
     private Object evaluate(Expr expr) {
         return expr.accept(this);
+    }
+
+    @Override
+    public Void visitExpressionStmt(Statement.Expression stmt) {
+        evaluate(stmt.expression);
+
+        return null;
+    }
+
+    @Override
+    public Void visitPrintStmt(Statement.Print stmt) {
+        Object value = evaluate(stmt.expression);
+        System.out.println(stringify(value));
+
+        return null;
     }
 
     @Override

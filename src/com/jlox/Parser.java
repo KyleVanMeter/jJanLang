@@ -1,6 +1,7 @@
 package com.jlox;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import static com.jlox.TokenType.*;
 
@@ -15,6 +16,15 @@ class Parser {
         this.tokens = tokens;
     }
 
+    List<Statement> parser() {
+        List<Statement> statements = new ArrayList<>();
+        while(!isAtEnd()) {
+            statements.add(statement());
+        }
+
+        return statements;
+    }
+    /*
     Expr parse() {
         try {
             return expression();
@@ -22,9 +32,29 @@ class Parser {
             return null;
         }
     }
+    */
 
     private Expr expression() {
         return ternary();
+    }
+
+    private Statement statement() {
+        if (match(PRINT))
+            return printStatement();
+
+        return expressionStatement();
+    }
+
+    private Statement printStatement() {
+        Expr value = expression();
+        consume(SEMICOLON, "expected ';' after value.");
+        return new Statement.Print(value);
+    }
+
+    private Statement expressionStatement() {
+        Expr expr = expression();
+        consume(SEMICOLON, "expected ';' after expression.");
+        return new Statement.Expression(expr);
     }
 
     private Expr ternary() {
