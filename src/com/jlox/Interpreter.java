@@ -5,8 +5,9 @@ class Interpreter implements Expr.Visitor<Object> {
     void interperet(Expr expr) {
         try {
             Object value = evaluate(expr);
+            System.out.println(stringify(value));
         } catch (RunTimeError error) {
-            Lox.runtimeErorr(error);
+            Lox.RunTimeError(error);
         }
     }
 
@@ -67,6 +68,36 @@ class Interpreter implements Expr.Visitor<Object> {
             return false;
 
         return a.equals(b);
+    }
+
+    private String stringify(Object object) {
+        if (object == null)
+            return "nil";
+        if (object instanceof Double) {
+            String text = object.toString();
+            if (text.endsWith(".0")) {
+                text = text.substring(0, text.length() - 2);
+            }
+
+            return text;
+        }
+
+        return object.toString();
+    }
+
+    @Override
+    public Object visitTernaryExpr(Expr.Ternary expr) {
+        Object left = evaluate(expr.left);
+
+        if (left instanceof Boolean) {
+            if (verisimilitude(left)) {
+                return evaluate(expr.mid);
+            }
+
+            return evaluate(expr.right);
+        }
+
+        throw new RunTimeError(expr.operator, " The left expression in ternary operator must return a boolean value.");
     }
 
     @Override

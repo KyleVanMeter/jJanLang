@@ -33,6 +33,7 @@ class Parser {
         Expr right = null;
 
         while (match(QUESTION)) {
+            Token token = previous();
             consume(COLON, "Expected '?' after ':' in ternary expression.");
             mid = expression();
             if (!check(COLON)) {
@@ -40,7 +41,7 @@ class Parser {
             }
             if (match(COLON)) {
                 right = expression();
-                expr = new Expr.Ternary(expr, mid, right);
+                expr = new Expr.Ternary(expr, token, mid, right);
             }
         }
 
