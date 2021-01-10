@@ -18,24 +18,31 @@ class Parser {
 
     List<Statement> parser() {
         List<Statement> statements = new ArrayList<>();
-        while(!isAtEnd()) {
-            statements.add(statement());
+        while (!isAtEnd()) {
+            statements.add(declaration());
         }
 
         return statements;
     }
     /*
-    Expr parse() {
-        try {
-            return expression();
-        } catch (ParseError error) {
-            return null;
-        }
-    }
-    */
+     * Expr parse() { try { return expression(); } catch (ParseError error) { return
+     * null; } }
+     */
 
     private Expr expression() {
         return ternary();
+    }
+
+    private Statement declaration() {
+        try {
+            if (match(VAR))
+                return varDeclaration();
+
+            return statement();
+        } catch (ParseError error) {
+            synchronize();
+            return null;
+        }
     }
 
     private Statement statement() {
@@ -49,6 +56,18 @@ class Parser {
         Expr value = expression();
         consume(SEMICOLON, "expected ';' after value.");
         return new Statement.Print(value);
+    }
+
+    private Statement varDeclaration() {
+        Token name = consume(IDENTIFIER, "Expected variable name.");
+
+        Expr initializer = null;
+        if (match(EQUAL)) {
+            initializer = expression();
+        }
+
+        consume(SEMICOLON, "Expected ';' after variable declaration.");
+        return new Statement.Var(name, initializer);
     }
 
     private Statement expressionStatement() {
@@ -145,6 +164,8 @@ class Parser {
             return new Expr.Literal(null);
         if (match(NUMBER, STRING))
             return new Expr.Literal(previous().literal);
+        if (match(IDENTIFIER))
+            return new Expr.Variable(previous());
         if (match(LEFT_PAREN)) {
             Expr expr = expression();
             consume(RIGHT_PAREN, "Expect ')' after expression.");
@@ -209,15 +230,15 @@ class Parser {
                 return;
 
             switch (peek().type) {
-            case CLASS:
-            case FUN:
-            case VAR:
-            case FOR:
-            case IF:
-            case WHILE:
-            case PRINT:
-            case RETURN:
-                return;
+                case CLASS:
+                case FUN:
+                case VAR:
+                case FOR:
+                case IF:
+                case WHILE:
+                case PRINT:
+                case RETURN:
+                    return;
             }
 
             advance();

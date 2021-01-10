@@ -4,6 +4,7 @@ import com.jlox.Statement.Visitor;
 import java.util.List;
 
 class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
+    private Environment environment = new Environment();
 
     void interperet(List<Statement> stmts) {
         try {
@@ -20,15 +21,10 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
     }
 
     /*
-    void interperet(Expr expr) {
-        try {
-            Object value = evaluate(expr);
-            System.out.println(stringify(value));
-        } catch (RunTimeError error) {
-            Lox.RunTimeError(error);
-        }
-    }
-    */
+     * void interperet(Expr expr) { try { Object value = evaluate(expr);
+     * System.out.println(stringify(value)); } catch (RunTimeError error) {
+     * Lox.RunTimeError(error); } }
+     */
 
     @Override
     public Object visitLiteralExpr(Expr.Literal expr) {
@@ -48,6 +44,17 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
     public Void visitExpressionStmt(Statement.Expression stmt) {
         evaluate(stmt.expression);
 
+        return null;
+    }
+
+    @Override
+    public Void visitVarStmt(Statement.Var stmt) {
+        Object value = null;
+        if (stmt.initializer != null) {
+            value = evaluate(stmt.initializer);
+        }
+
+        environment.define(stmt.name.lexeme, value);
         return null;
     }
 
@@ -72,6 +79,11 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
         }
 
         return null;
+    }
+
+    @Override
+    public Object visitVariableExpr(Expr.Variable expr) {
+        return environment.get(expr.name);
     }
 
     private void checkNumberOperand(Token operator, Object operand) {
