@@ -1,12 +1,16 @@
 package com.jlox;
 
+import java.util.List;
+
 abstract class Statement {
     interface Visitor<R> {
         R visitExpressionStmt(Expression stmt);
 
         R visitPrintStmt(Print stmt);
 
-        R visitVarStmt(Var statement);
+        R visitVarStmt(Var stmt);
+
+        R visitBlockStmt(Block stmt);
     }
 
     static class Expression extends Statement {
@@ -35,8 +39,6 @@ abstract class Statement {
         final Expr expression;
     }
 
-    abstract <R> R accept(Visitor<R> visitor);
-
     static class Var extends Statement {
         Var(Token name, Expr expr) {
             this.name = name;
@@ -51,4 +53,19 @@ abstract class Statement {
         final Token name;
         final Expr initializer;
     }
+
+    static class Block extends Statement {
+        Block(List<Statement> stmts) {
+            this.stmts = stmts;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitBlockStmt(this);
+        }
+
+        final List<Statement> stmts;
+    }
+
+    abstract <R> R accept(Visitor<R> visitor);
 }
