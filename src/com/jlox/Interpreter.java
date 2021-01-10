@@ -1,5 +1,6 @@
 package com.jlox;
 
+import com.jlox.Expr.Assign;
 import com.jlox.Statement.Visitor;
 import java.util.List;
 
@@ -56,6 +57,13 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
 
         environment.define(stmt.name.lexeme, value);
         return null;
+    }
+
+    @Override
+    public Object visitAssignExpr(Expr.Assign expr) {
+        Object value = evaluate(expr.value);
+        environment.assign(expr.name, value);
+        return value;
     }
 
     @Override

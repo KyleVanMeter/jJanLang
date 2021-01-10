@@ -30,7 +30,7 @@ class Parser {
      */
 
     private Expr expression() {
-        return ternary();
+        return assignment();
     }
 
     private Statement declaration() {
@@ -74,6 +74,24 @@ class Parser {
         Expr expr = expression();
         consume(SEMICOLON, "expected ';' after expression.");
         return new Statement.Expression(expr);
+    }
+
+    private Expr assignment() {
+        Expr expr = ternary();
+
+        if (match(EQUAL)) {
+            Token equals = previous();
+            Expr value = assignment();
+
+            if (expr instanceof Expr.Variable) {
+                Token name = ((Expr.Variable) expr).name;
+                return new Expr.Assign(name, value);
+            }
+
+            error(equals, "Invalid assignment target in rvalue.");
+        }
+
+        return expr;
     }
 
     private Expr ternary() {
