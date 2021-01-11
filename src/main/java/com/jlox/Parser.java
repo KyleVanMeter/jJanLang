@@ -1,9 +1,9 @@
-package com.jlox;
+package main.java.com.jlox;
 
 import java.util.List;
 import java.util.ArrayList;
 
-import static com.jlox.TokenType.*;
+import static main.java.com.jlox.TokenType.*;
 
 class Parser {
     private static class ParseError extends RuntimeException {

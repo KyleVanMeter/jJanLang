@@ -1,4 +1,5 @@
-package com.jlox;
+/*
+package main.java.com.jlox;
 
 class AstPrinter implements Expr.Visitor<String> {
     String print(Expr expr) {
@@ -46,3 +47,4 @@ class AstPrinter implements Expr.Visitor<String> {
         return builder.toString();
     }
 }
+*/

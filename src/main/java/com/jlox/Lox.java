@@ -1,4 +1,4 @@
-package com.jlox;
+package main.java.com.jlox;
 
 import java.io.IOException;
 import java.nio.charset.Charset;

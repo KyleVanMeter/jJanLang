@@ -1,4 +1,4 @@
-package com.jlox;
+package main.java.com.jlox;
 
 public class RunTimeError extends RuntimeException {
     final Token token;

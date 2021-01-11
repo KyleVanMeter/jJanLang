@@ -1,7 +1,7 @@
-package com.jlox;
+package main.java.com.jlox;
 
-import com.jlox.Expr.Assign;
-import com.jlox.Statement.Visitor;
+import main.java.com.jlox.Expr.Assign;
+import main.java.com.jlox.Statement.Visitor;
 import java.util.List;
 
 class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
