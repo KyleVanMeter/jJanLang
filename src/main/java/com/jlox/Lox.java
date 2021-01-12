@@ -8,12 +8,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
+
 public class Lox {
     private static final Interpreter interpreter = new Interpreter();
     static boolean hadError = false;
     static boolean hadRunTimeError = false;
 
     public static void main(String[] args) throws IOException {
+    	Terminal terminal = TerminalBuilder.terminal();
+    	terminal.close();
         if (args.length > 1) {
             System.out.println("Usage: jlox [script]");
             System.exit(64);
