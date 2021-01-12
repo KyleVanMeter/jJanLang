@@ -8,6 +8,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
@@ -17,8 +21,6 @@ public class Lox {
     static boolean hadRunTimeError = false;
 
     public static void main(String[] args) throws IOException {
-    	Terminal terminal = TerminalBuilder.terminal();
-    	terminal.close();
         if (args.length > 1) {
             System.out.println("Usage: jlox [script]");
             System.exit(64);
@@ -40,14 +42,19 @@ public class Lox {
     }
 
     public static void runPrompt() throws IOException {
-        InputStreamReader input = new InputStreamReader(System.in);
-        BufferedReader reader = new BufferedReader(input);
+        Terminal terminal = TerminalBuilder.terminal();
+        LineReader lReader = LineReaderBuilder.builder().terminal(terminal).build();
 
         for (;;) {
-            System.out.print("> ");
-            String line = reader.readLine();
-            if (line == null)
+            String line = null;
+            try {
+                line = lReader.readLine("> ");
+            } catch (UserInterruptException e) {
                 break;
+            } catch (EndOfFileException e) {
+                break;
+            }
+
             run(line);
             hadError = false;
         }
@@ -65,7 +72,7 @@ public class Lox {
             return;
 
         interpreter.interperet(statements);
-        //System.out.println(new AstPrinter().print(expression));
+        // System.out.println(new AstPrinter().print(expression));
     }
 
     static void error(int line, String message) {
