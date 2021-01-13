@@ -11,6 +11,8 @@ abstract class Statement {
         R visitVarStmt(Var stmt);
 
         R visitBlockStmt(Block stmt);
+
+        R visitIfStmt(If stmt);
     }
 
     static class Expression extends Statement {
@@ -65,6 +67,24 @@ abstract class Statement {
         }
 
         final List<Statement> stmts;
+    }
+
+    static class If extends Statement {
+        If(Expr condition, Statement thenBranch, Statement elseBranch) {
+            this.condition = condition;
+            this.thenBranch = thenBranch;
+            this.elseBranch = elseBranch;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitIfStmt(this);
+        }
+
+        final Expr condition;
+        final Statement thenBranch;
+        final Statement elseBranch;
+
     }
 
     abstract <R> R accept(Visitor<R> visitor);
