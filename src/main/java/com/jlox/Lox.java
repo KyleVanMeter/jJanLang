@@ -2,8 +2,6 @@ package main.java.com.jlox;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -12,8 +10,12 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
+import org.jline.reader.LineReader.Option;
+import org.jline.reader.impl.DefaultParser;
+import org.jline.reader.impl.DefaultParser.Bracket;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import org.jline.widget.AutopairWidgets;
 
 public class Lox {
     private static final Interpreter interpreter = new Interpreter();
@@ -42,13 +44,22 @@ public class Lox {
     }
 
     public static void runPrompt() throws IOException {
+        String prompt = "> ";
         Terminal terminal = TerminalBuilder.terminal();
-        LineReader lReader = LineReaderBuilder.builder().terminal(terminal).build();
+        DefaultParser parser = new DefaultParser();
+        parser.setEofOnUnclosedBracket(Bracket.CURLY);
+
+        LineReader reader = LineReaderBuilder.builder().terminal(terminal).parser(parser)
+                .variable(LineReader.SECONDARY_PROMPT_PATTERN, "...").variable(LineReader.INDENTATION, 2)
+                .option(Option.INSERT_BRACKET, true).build();
+
+        AutopairWidgets autopair = new AutopairWidgets(reader);
+        autopair.enable();
 
         for (;;) {
             String line = null;
             try {
-                line = lReader.readLine("> ");
+                line = reader.readLine(prompt);
             } catch (UserInterruptException e) {
                 break;
             } catch (EndOfFileException e) {
