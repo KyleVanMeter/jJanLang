@@ -1,6 +1,7 @@
 package main.java.com.jlox;
 
 import main.java.com.jlox.Expr.Assign;
+import main.java.com.jlox.Expr.Logical;
 import main.java.com.jlox.Statement.Visitor;
 import java.util.List;
 
@@ -233,4 +234,19 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
 
         return null;
     }
+
+	@Override
+	public Object visitLogicalExpr(Logical expr) {
+        Object left = evaluate(expr.left);
+
+        if (expr.operator.type == TokenType.OR) {
+            if (verisimilitude(left))
+                return left;
+        } else {
+            if (!verisimilitude(left))
+                return left;
+        }
+
+        return evaluate(expr.right);
+	}
 }
