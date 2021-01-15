@@ -50,6 +50,8 @@ class Parser {
             return ifStatement();
         if (match(PRINT))
             return printStatement();
+        if (match(WHILE))
+            return whileStatement();
         if (match(LEFT_BRACE))
             return new Statement.Block(block());
 
@@ -86,6 +88,15 @@ class Parser {
 
         consume(SEMICOLON, "Expected ';' after variable declaration.");
         return new Statement.Var(name, initializer);
+    }
+
+    private Statement whileStatement() {
+        consume(LEFT_PAREN, "Expected '(' after 'while'.");
+        Expr condition = expression();
+        consume(RIGHT_PAREN, "Expected ')' after condition.");
+        Statement body = statement();
+
+        return new Statement.While(condition, body);
     }
 
     private Statement expressionStatement() {

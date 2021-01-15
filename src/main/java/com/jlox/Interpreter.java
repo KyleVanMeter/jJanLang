@@ -3,6 +3,8 @@ package main.java.com.jlox;
 import main.java.com.jlox.Expr.Assign;
 import main.java.com.jlox.Expr.Logical;
 import main.java.com.jlox.Statement.Visitor;
+import main.java.com.jlox.Statement.While;
+
 import java.util.List;
 
 class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
@@ -248,5 +250,14 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
         }
 
         return evaluate(expr.right);
+	}
+
+	@Override
+	public Void visitWhileStmt(Statement.While stmt) {
+      while (verisimilitude(evaluate(stmt.condition))) {
+          execute(stmt.body);
+      }
+
+      return null;
 	}
 }

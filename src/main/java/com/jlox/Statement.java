@@ -13,6 +13,8 @@ abstract class Statement {
         R visitBlockStmt(Block stmt);
 
         R visitIfStmt(If stmt);
+
+        R visitWhileStmt(While stmt);
     }
 
     static class Expression extends Statement {
@@ -85,6 +87,21 @@ abstract class Statement {
         final Statement thenBranch;
         final Statement elseBranch;
 
+    }
+
+    static class While extends Statement {
+        While(Expr condition, Statement body) {
+            this.condition = condition;
+            this.body = body;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitWhileStmt(this);
+        }
+
+        final Expr condition;
+        final Statement body;
     }
 
     abstract <R> R accept(Visitor<R> visitor);
