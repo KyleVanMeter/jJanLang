@@ -2,6 +2,8 @@ package main.java.com.jlox;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
+import main.java.com.jlox.Statement.Block;
 
 import static main.java.com.jlox.TokenType.*;
 
@@ -46,6 +48,8 @@ class Parser {
     }
 
     private Statement statement() {
+        if (match(FOR))
+            return forStatement();
         if (match(IF))
             return ifStatement();
         if (match(PRINT))
@@ -56,6 +60,47 @@ class Parser {
             return new Statement.Block(block());
 
         return expressionStatement();
+    }
+
+    private Statement forStatement() {
+        consume(LEFT_PAREN, "Expect '(' after 'for'.");
+
+        Statement initializer;
+        if (match(SEMICOLON)) {
+            initializer = null;
+        } else if (match(VAR)) {
+            initializer = varDeclaration();
+        } else {
+            initializer = expressionStatement();
+        }
+
+        Expr condition = null;
+        if (!check(SEMICOLON)) {
+            condition = expression();
+        }
+        consume(SEMICOLON, "Expect ';' after loop condition.");
+
+        Expr increment = null;
+        if (!check(SEMICOLON)) {
+            increment = expression();
+        }
+        consume(RIGHT_PAREN, "Expect ')' after for clauses.");
+        Statement body = statement();
+
+        if (increment != null) {
+            body = new Statement.Block(Arrays.asList(body, new Statement.Expression(increment)));
+        }
+
+        if (condition == null) {
+            condition = new Expr.Literal(true);
+        }
+        body = new Statement.While(condition, body);
+
+        if (initializer != null) {
+            body = new Statement.Block(Arrays.asList(initializer, body));
+        }
+
+        return body;
     }
 
     private Statement ifStatement() {
