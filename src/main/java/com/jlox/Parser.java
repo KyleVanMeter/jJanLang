@@ -13,6 +13,7 @@ class Parser {
 
     private final List<Token> tokens;
     private int current = 0;
+    private int depth = 0;
 
     Parser(List<Token> tokens) {
         this.tokens = tokens;
@@ -59,7 +60,7 @@ class Parser {
         if (match(WHILE))
             return whileStatement();
         if (match(LEFT_BRACE))
-            return new Statement.Block(block());
+            return new Statement.Block(block(), depth);
 
         return expressionStatement();
     }
@@ -71,6 +72,10 @@ class Parser {
 
     private Statement forStatement() {
         consume(LEFT_PAREN, "Expect '(' after 'for'.");
+        // depth is 1 here because 'for' is syntactic sugar for while, but we are
+        // constructing the block statement ourselves so immediately after a 'for' we
+        // are guaranteed to always be at depth of at least 1.
+        this.depth = 1;
 
         Statement initializer;
         if (match(SEMICOLON)) {
@@ -95,7 +100,7 @@ class Parser {
         Statement body = statement();
 
         if (increment != null) {
-            body = new Statement.Block(Arrays.asList(body, new Statement.Expression(increment)));
+            body = new Statement.Block(Arrays.asList(body, new Statement.Expression(increment)), depth);
         }
 
         if (condition == null) {
@@ -104,7 +109,7 @@ class Parser {
         body = new Statement.While(condition, body);
 
         if (initializer != null) {
-            body = new Statement.Block(Arrays.asList(initializer, body));
+            body = new Statement.Block(Arrays.asList(initializer, body), depth);
         }
 
         return body;
@@ -147,6 +152,7 @@ class Parser {
         Expr condition = expression();
         consume(RIGHT_PAREN, "Expected ')' after condition.");
         Statement body = statement();
+        this.depth = 0;
 
         return new Statement.While(condition, body);
     }
@@ -160,11 +166,13 @@ class Parser {
     private List<Statement> block() {
         List<Statement> stmts = new ArrayList<>();
 
+        this.depth++;
         while (!check(RIGHT_BRACE) && !isAtEnd()) {
             stmts.add(declaration());
         }
 
         consume(RIGHT_BRACE, "Expect '}' after block");
+        this.depth--;
         return stmts;
     }
 

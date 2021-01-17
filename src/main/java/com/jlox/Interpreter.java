@@ -26,13 +26,16 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
         stmt.accept(this);
     }
 
-    void executeBlock(List<Statement> stmts, Environment environment) {
+    void executeBlock(List<Statement> stmts, Environment environment, int depth) {
         Environment previous = this.environment;
 
         try {
             this.environment = environment;
 
             for (Statement statement : stmts) {
+                if (statement instanceof Statement.Break) {
+                    System.out.println("break at loop level: " + depth);
+                }
                 execute(statement);
             }
         } finally {
@@ -42,7 +45,8 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
 
     @Override
     public Void visitBlockStmt(Statement.Block stmt) {
-        executeBlock(stmt.stmts, new Environment(environment));
+        System.out.println("loopDepth: " + stmt.loopDepth);
+        executeBlock(stmt.stmts, new Environment(environment), stmt.loopDepth);
 
         return null;
     }

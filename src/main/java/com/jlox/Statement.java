@@ -61,8 +61,9 @@ abstract class Statement {
     }
 
     static class Block extends Statement {
-        Block(List<Statement> stmts) {
+        Block(List<Statement> stmts, int loopDepth) {
             this.stmts = stmts;
+            this.loopDepth = loopDepth;
         }
 
         @Override
@@ -71,6 +72,7 @@ abstract class Statement {
         }
 
         final List<Statement> stmts;
+        public int loopDepth;
     }
 
     static class If extends Statement {
