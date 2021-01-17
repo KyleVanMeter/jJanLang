@@ -15,6 +15,8 @@ abstract class Statement {
         R visitIfStmt(If stmt);
 
         R visitWhileStmt(While stmt);
+
+        R visitBreakStmt(Break stmt);
     }
 
     static class Expression extends Statement {
@@ -102,6 +104,15 @@ abstract class Statement {
 
         final Expr condition;
         final Statement body;
+    }
+
+    static class Break extends Statement {
+        Break() {}
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitBreakStmt(this);
+        }
     }
 
     abstract <R> R accept(Visitor<R> visitor);

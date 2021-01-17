@@ -2,6 +2,7 @@ package main.java.com.jlox;
 
 import main.java.com.jlox.Expr.Assign;
 import main.java.com.jlox.Expr.Logical;
+import main.java.com.jlox.Statement.Break;
 import main.java.com.jlox.Statement.Visitor;
 import main.java.com.jlox.Statement.While;
 
@@ -12,6 +13,7 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
 
     void interperet(List<Statement> stmts) {
         try {
+            System.out.println(stmts);
             for (Statement stmt : stmts) {
                 execute(stmt);
             }
@@ -41,6 +43,7 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
     @Override
     public Void visitBlockStmt(Statement.Block stmt) {
         executeBlock(stmt.stmts, new Environment(environment));
+
         return null;
     }
 
@@ -237,8 +240,8 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
         return null;
     }
 
-	@Override
-	public Object visitLogicalExpr(Logical expr) {
+    @Override
+    public Object visitLogicalExpr(Logical expr) {
         Object left = evaluate(expr.left);
 
         if (expr.operator.type == TokenType.OR) {
@@ -250,14 +253,19 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
         }
 
         return evaluate(expr.right);
-	}
+    }
 
-	@Override
-	public Void visitWhileStmt(Statement.While stmt) {
-      while (verisimilitude(evaluate(stmt.condition))) {
-          execute(stmt.body);
-      }
+    @Override
+    public Void visitWhileStmt(Statement.While stmt) {
+        while (verisimilitude(evaluate(stmt.condition))) {
+            execute(stmt.body);
+        }
 
-      return null;
-	}
+        return null;
+    }
+
+    @Override
+    public Void visitBreakStmt(Break stmt) {
+        return null;
+    }
 }

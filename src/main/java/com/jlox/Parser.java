@@ -48,6 +48,8 @@ class Parser {
     }
 
     private Statement statement() {
+        if (match(BREAK))
+            return breakStatement();
         if (match(FOR))
             return forStatement();
         if (match(IF))
@@ -60,6 +62,11 @@ class Parser {
             return new Statement.Block(block());
 
         return expressionStatement();
+    }
+
+    private Statement breakStatement() {
+        consume(SEMICOLON, "Expect ';' after 'break'.");
+        return new Statement.Break();
     }
 
     private Statement forStatement() {
@@ -357,6 +364,7 @@ class Parser {
                 return;
 
             switch (peek().type) {
+                case BREAK:
                 case CLASS:
                 case FUN:
                 case VAR:
