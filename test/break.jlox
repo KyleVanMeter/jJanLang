@@ -1,0 +1,5 @@
+{
+  print "nothing should happen.";
+  break;
+  print "this should print.";
+}
