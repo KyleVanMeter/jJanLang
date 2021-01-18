@@ -1,0 +1,19 @@
+for(var a = 0; a < 5; a = a + 1) {
+  for(var b = 0; b < 5; b = b + 1) {
+    print "a = ";
+    print a;
+    print "b = ";
+    print b;
+
+    if (b == 3) {
+      print "break1";
+      break;
+    }
+  }
+
+  if (a == 4) {
+    print "break2";
+    break;
+  }
+  print "outer";
+}
