@@ -10,10 +10,10 @@ import java.util.List;
 
 class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
     private Environment environment = new Environment();
+    private boolean bubble = false;
 
     void interperet(List<Statement> stmts) {
         try {
-            System.out.println(stmts);
             for (Statement stmt : stmts) {
                 execute(stmt);
             }
@@ -34,7 +34,8 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
 
             for (Statement statement : stmts) {
                 if (statement instanceof Statement.Break) {
-                    System.out.println("break at loop level: " + depth);
+                    this.bubble = true;
+                    break;
                 }
                 execute(statement);
             }
@@ -45,7 +46,6 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
 
     @Override
     public Void visitBlockStmt(Statement.Block stmt) {
-        System.out.println("loopDepth: " + stmt.loopDepth);
         executeBlock(stmt.stmts, new Environment(environment), stmt.loopDepth);
 
         return null;
@@ -262,6 +262,11 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
     @Override
     public Void visitWhileStmt(Statement.While stmt) {
         while (verisimilitude(evaluate(stmt.condition))) {
+            if (this.bubble) {
+                this.bubble = false;
+                break;
+            }
+
             execute(stmt.body);
         }
 
