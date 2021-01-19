@@ -17,6 +17,8 @@ abstract class Statement {
         R visitWhileStmt(While stmt);
 
         R visitBreakStmt(Break stmt);
+
+        R visitContinueStmt(Continue stmt);
     }
 
     static class Expression extends Statement {
@@ -109,11 +111,22 @@ abstract class Statement {
     }
 
     static class Break extends Statement {
-        Break() {}
+        Break() {
+        }
 
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitBreakStmt(this);
+        }
+    }
+
+    static class Continue extends Statement {
+        Continue() {
+        }
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitContinueStmt(this);
         }
     }
 

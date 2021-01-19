@@ -3,6 +3,7 @@ package main.java.com.jlox;
 import main.java.com.jlox.Expr.Assign;
 import main.java.com.jlox.Expr.Logical;
 import main.java.com.jlox.Statement.Break;
+import main.java.com.jlox.Statement.Continue;
 import main.java.com.jlox.Statement.Visitor;
 import main.java.com.jlox.Statement.While;
 
@@ -10,7 +11,7 @@ import java.util.List;
 
 class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
     private Environment environment = new Environment();
-    private boolean bubble = false;
+    private boolean bubbleBreak = false;
 
     void interperet(List<Statement> stmts) {
         try {
@@ -34,9 +35,10 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
 
             for (Statement statement : stmts) {
                 if (statement instanceof Statement.Break) {
-                    this.bubble = true;
+                    this.bubbleBreak = true;
                     break;
                 }
+
                 execute(statement);
             }
         } finally {
@@ -262,8 +264,8 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
     @Override
     public Void visitWhileStmt(Statement.While stmt) {
         while (verisimilitude(evaluate(stmt.condition))) {
-            if (this.bubble) {
-                this.bubble = false;
+            if (this.bubbleBreak) {
+                this.bubbleBreak = false;
                 break;
             }
 
@@ -275,6 +277,11 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
 
     @Override
     public Void visitBreakStmt(Break stmt) {
+        return null;
+    }
+
+    @Override
+    public Void visitContinueStmt(Continue stmt) {
         return null;
     }
 }

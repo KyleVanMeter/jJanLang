@@ -51,6 +51,8 @@ class Parser {
     private Statement statement() {
         if (match(BREAK))
             return breakStatement();
+        if (match(CONTINUE))
+            return continueStatement();
         if (match(FOR))
             return forStatement();
         if (match(IF))
@@ -68,6 +70,11 @@ class Parser {
     private Statement breakStatement() {
         consume(SEMICOLON, "Expect ';' after 'break'.");
         return new Statement.Break();
+    }
+
+    private Statement continueStatement() {
+        consume(SEMICOLON, "Expect ';' after 'continue'.");
+        return new Statement.Continue();
     }
 
     private Statement forStatement() {
