@@ -7,6 +7,7 @@ import main.java.com.jlox.Statement.Continue;
 import main.java.com.jlox.Statement.Visitor;
 import main.java.com.jlox.Statement.While;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
@@ -244,6 +245,28 @@ class Interpreter implements Expr.Visitor<Object>, Statement.Visitor<Void> {
         }
 
         return null;
+    }
+
+    @Override
+    public Object visitCallExpr(Expr.Call expr) {
+        Object callee = evaluate(expr.callee);
+
+        List<Object> args = new ArrayList<>();
+        for (Expr arg : expr.args) {
+            args.add(evaluate(arg));
+        }
+
+        if (!(callee instanceof LoxCallable)) {
+            throw new RunTimeError(expr.paren, "Cannot call non-callable object.");
+        }
+
+        LoxCallable func = (LoxCallable) callee;
+        if (args.size() != func.arity()) {
+            throw new RunTimeError(expr.paren,
+                    "Expected " + func.arity() + " but got " + args.size() + " number of arguments.");
+        }
+
+        return func.call(this, args);
     }
 
     @Override

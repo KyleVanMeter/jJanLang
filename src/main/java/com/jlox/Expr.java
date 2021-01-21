@@ -1,7 +1,8 @@
 package main.java.com.jlox;
 
-abstract class Expr {
+import java.util.List;
 
+abstract class Expr {
     interface Visitor<R> {
         R visitBinaryExpr(Binary expr);
 
@@ -18,6 +19,8 @@ abstract class Expr {
         R visitAssignExpr(Assign expr);
 
         R visitLogicalExpr(Logical expr);
+
+        R visitCallExpr(Call expr);
     }
 
     static class Binary extends Expr {
@@ -140,6 +143,23 @@ abstract class Expr {
         final Expr left;
         final Expr right;
         final Token operator;
+    }
+
+    static class Call extends Expr {
+        Call(Expr callee, Token paren, List<Expr> args) {
+            this.callee = callee;
+            this.paren = paren;
+            this.args = args;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitCallExpr(this);
+        }
+
+        final Expr callee;
+        final Token paren;
+        final List<Expr> args;
     }
 
     abstract <R> R accept(Visitor<R> visitor);
